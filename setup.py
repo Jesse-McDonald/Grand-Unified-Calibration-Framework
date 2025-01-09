@@ -26,8 +26,15 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'scikit-learn',
-        'numpy'
+        'numpy~=1.26.0',
+        'scikit-learn~=1.4.0',
+        # 'deephyper[hps]==0.7.0',
+        'scikit-optimize',
+        'processify @ git+https://github.com/dgerosa/processify',
+        'torch',
+        'torchvision',
+        'ddKS @ git+https://github.com/pnnl/DDKS',
+        'POT'
     ],
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
