@@ -1,6 +1,14 @@
 setuptools~=69.1.0
-# Python 3.7 min
-scikit-learn~=1.4.0 #For Examples: Recomended for its built in loss functions
 numpy~=1.26.0
+scikit-learn~=1.4.0
 #deephyper[hps]==0.7.0
-scikit-optimize #for skopt
+scikit-optimize
+
+git+https://github.com/dgerosa/processify
+torch
+torchvision
+git+https://github.com/pnnl/DDKS
+POT
+
+# install this package
+.
