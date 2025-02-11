@@ -48,3 +48,6 @@ class Ordinal(Ordered):
         idx = self.options.index(x)
         x_normal = idx / len(self.options)
         return x_normal * (self.range_end - self.range_start) + self.range_start
+
+    def from_index(self,i : int):
+        return self.apply_format(self.options[i])

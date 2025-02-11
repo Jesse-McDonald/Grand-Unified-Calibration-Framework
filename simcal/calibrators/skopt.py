@@ -7,7 +7,7 @@ from skopt.space import *
 import simcal.calibrators as sc
 import simcal.exceptions as exception
 import simcal.simulator as Simulator
-from simcal.parameters import *
+from simcal.parameters import Exponential, Linear, Ordered, Value, Ordinal
 import simcal.coordinators.base as Coordinator
 
 def _eval(simulator: Simulator, params, calibration, stoptime):
@@ -36,7 +36,7 @@ class ScikitOptimizer(sc.Base):
                   coordinator: Coordinator.Base | None = None) -> tuple[dict[str, Value | float | int], float]:
         from simcal.coordinators import Base as Coordinator
 
-        self._categorical_params = {}
+        # self._categorical_params = {}
         parameters = []
         for (key, param) in self._ordered_params.items():
             if isinstance(param, Exponential):
@@ -52,8 +52,13 @@ class ScikitOptimizer(sc.Base):
                     parameters.append(Integer(param.start, param.end, 'uniform', 2, name=key))
                 else:
                     parameters.append(Real(param.start, param.end, 'uniform', 2, name=key))
+            elif isinstance(param, Ordinal):
+                parameters.append(Integer(0, len(param.options)-1, 'uniform', 2, name=key))
             elif isinstance(param, Ordered):
-                parameters.append(Integer(param.range_start, param.range_end, 'uniform', 2, name=key))
+                if param.integer:
+                    parameters.append(Integer(param.range_start, param.range_end, 'uniform', 2, name=key))
+                else:
+                    parameters.append(Real(param.range_start, param.range_end, 'uniform', 2, name=key))
         for (key, param) in self._categorical_params.items():
             parameters.append(Categorical(param.categories, name=key))
 
@@ -126,7 +131,10 @@ class ScikitOptimizer(sc.Base):
         calibration = {}
         for param, value in zip(parameters, params):
             if param.name in self._ordered_params:
-                calibration[param.name] = self._ordered_params[param.name].apply_format(value)
+                if isinstance(self._ordered_params[param.name], Ordinal):
+                    calibration[param.name] = self._ordered_params[param.name].from_index(value)
+                else:
+                    calibration[param.name] = self._ordered_params[param.name].apply_format(value)
             else:
                 calibration[param.name] = self._categorical_params[param.name].apply_format(value)
 
